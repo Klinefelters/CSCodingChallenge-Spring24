@@ -1,8 +1,8 @@
-import { Box } from "@chakra-ui/react"
+import { Box, Center } from "@chakra-ui/react"
 
 function App() {
   return (
-    <Box>
+    <Box bg="black" color='white' textAlign={'center'}>
       Hello World
     </Box>
   )
