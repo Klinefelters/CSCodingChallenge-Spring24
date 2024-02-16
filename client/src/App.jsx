@@ -1,7 +1,8 @@
 import { Box, Button } from "@chakra-ui/react"
+import { useState } from "react";
 
 function App() {
-  const [direction, setDirection] = React.useState([
+  const direction = [
     'to-t',
     'to-tr',
     'to-r',
@@ -10,10 +11,11 @@ function App() {
     'to-bl',
     'to-l',
     'to-tl',
-  ])
-  const [index, setIndex] = React.useState(0)
+  ]
+  const [index, setIndex] = useState(0)
 
   const rotateGradient = () => {
+    console.log('linear('+direction[index]+', red.100, blue.300)');
     if (index == direction.length - 1) setIndex(0);
 
     setIndex((previous) => previous + 1);
@@ -21,14 +23,14 @@ function App() {
   
   return (
       <Box
-      w="50%"
-      h="300px"
-      bgGradient={'linear (' + direction[index] + ', red.100, blue.300'}
+      w="100%"
+      h="100vh"
+      bgGradient={'linear('+direction[index]+', red.100, blue.300)'}
       >
         <Button
-        left="20%"
-        top="20%"
-        bgGradient={'linear (' + direction[index] + ', red.100, blue.300'}
+        left="50%"
+        top="50%"
+        colorScheme="teal"
         onClick={() => rotateGradient()}
         >
         Click me!
