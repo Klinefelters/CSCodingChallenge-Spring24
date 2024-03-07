@@ -1,19 +1,31 @@
 {
   "name": "cscodingchallenge-spring24",
+  "author": "Steven and Elijah",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "OnShape Desktop App",
+  "main": "src/main.js",
   "scripts": {
     "dev": "nodemon --exec electron src/main.js",
     "start": "electron src/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+      "appId": "your.id",
+      "win": {
+          "target": "nsis"
+      }
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "electron": "^29.1.0",
+    "electron-builder": "^22.14.5",
     "electron-reloader": "^1.2.3",
     "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0",
+    "keytar": "^7.9.0"
   }
 }
