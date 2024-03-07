@@ -1,6 +1,6 @@
 {
   "name": "OnShape-Desktop",
-  "author": "Steven and Elijah",
+  "author": "Steven Klinefelter and Elijah Wagner",
   "version": "1.0.0",
   "description": "OnShape Desktop App",
   "main": "src/main.js",
