@@ -7,6 +7,7 @@ function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
+		icon: __dirname + "/assets/onshape.png",
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,
@@ -25,8 +26,10 @@ function createWindow() {
 			signedOut(mainWindow);
 		} else {
 			mainWindow.webContents.executeJavaScript(`
-        document.querySelector('#credentials-menu').innerHTML = '';
-      `);
+				if (window.menu){
+					window.menu.innerHTML = '';
+				}
+			`);
 		}
 	};
 

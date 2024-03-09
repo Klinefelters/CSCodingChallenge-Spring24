@@ -79,17 +79,17 @@ function signedOut(mainWindow) {
         require('electron').ipcRenderer.invoke('get-credentials').then(credentials => {
             window.credentials = credentials;
 
-            let menu = document.querySelector('#credentials-menu');
-            if (!menu) {
-                menu = document.createElement('div');
-                menu.id = 'credentials-menu';
-                menu.style.position = 'absolute';
-                menu.style.right = '50%';
-                menu.style.bottom = '10%';
-                menu.style.transform = 'translateX(50%)';
+            window.menu = window.menu || document.querySelector('#credentials-menu');
+            if (!window.menu) {
+                window.menu = document.createElement('div');
+                window.menu.id = 'credentials-menu';
+                window.menu.style.position = 'absolute';
+                window.menu.style.right = '50%';
+                window.menu.style.bottom = '10%';
+                window.menu.style.transform = 'translateX(50%)';
                 document.body.appendChild(menu);
             } else {
-                menu.innerHTML = '';
+                window.menu.innerHTML = '';
             }
 
             for (let i = 0; i < window.credentials.length; i++) {
@@ -125,7 +125,7 @@ function signedOut(mainWindow) {
 
                 buttonDiv.appendChild(button);
                 buttonDiv.appendChild(deleteButton);
-                menu.appendChild(buttonDiv);
+                window.menu.appendChild(buttonDiv);
             }
         });
     `);
