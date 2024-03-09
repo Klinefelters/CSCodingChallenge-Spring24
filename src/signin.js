@@ -84,8 +84,9 @@ function signedOut(mainWindow) {
                 menu = document.createElement('div');
                 menu.id = 'credentials-menu';
                 menu.style.position = 'absolute';
-                menu.style.right = '0';
-                menu.style.top = '10%';
+                menu.style.right = '50%';
+                menu.style.bottom = '10%';
+                menu.style.transform = 'translateX(50%)';
                 document.body.appendChild(menu);
             } else {
                 menu.innerHTML = '';
