@@ -9,10 +9,14 @@ ipcMain.on("save-credentials", (event, { email, password }) => {
 	store.set("credentials", existingCredentials);
 });
 
-ipcMain.on("delete-credential", (event, index) => {
+ipcMain.on("delete-credential", (event, { index }) => {
 	const credentials = store.get("credentials", []);
 	credentials.splice(index, 1);
 	store.set("credentials", credentials);
+});
+
+ipcMain.handle("get-credentials", () => {
+	return store.get("credentials", []);
 });
 
 function gatherCredentials(mainWindow) {
@@ -71,53 +75,58 @@ function initialSignIn(mainWindow) {
 
 function signedOut(mainWindow) {
 	gatherCredentials(mainWindow);
-	const credentials = JSON.stringify(store.get("credentials", []));
 	mainWindow.webContents.executeJavaScript(`
-        if (!window.credentials){
-        window.credentials = JSON.parse('${credentials}');
+        require('electron').ipcRenderer.invoke('get-credentials').then(credentials => {
+            window.credentials = credentials;
 
-        let menu = document.querySelector('#credentials-menu');
-        if (!menu) {
-            menu = document.createElement('div');
-            menu.id = 'credentials-menu';
-            menu.style.position = 'absolute';
-            menu.style.right = '0';
-            menu.style.top = '0';
-            document.body.appendChild(menu);
-        } else {
-            menu.innerHTML = '';
-        }
+            let menu = document.querySelector('#credentials-menu');
+            if (!menu) {
+                menu = document.createElement('div');
+                menu.id = 'credentials-menu';
+                menu.style.position = 'absolute';
+                menu.style.right = '0';
+                menu.style.top = '10%';
+                document.body.appendChild(menu);
+            } else {
+                menu.innerHTML = '';
+            }
 
-        for (let i = 0; i < window.credentials.length; i++) {
-            let credential = window.credentials[i];
+            for (let i = 0; i < window.credentials.length; i++) {
+                let credential = window.credentials[i];
 
-            let button = document.createElement('button');
-            button.textContent = credential.email;
-            button.addEventListener('click', () => {
-                let emailInput = document.querySelector('input[name="email"]');
-                let passwordInput = document.querySelector('input[name="password"]');
-                let submitButton = document.querySelector('button[type="submit"]');
+                let buttonDiv = document.createElement('div');
+                buttonDiv.style.display = 'flex';
+                buttonDiv.style.justifyContent = 'space-between';
 
-                emailInput.value = credential.email;
-                passwordInput.value = credential.password;
-                emailInput.dispatchEvent(new Event('input', { bubbles: true }));
-                passwordInput.dispatchEvent(new Event('input', { bubbles: true }));
+                let button = document.createElement('button');
+                button.textContent = credential.email;
+                button.addEventListener('click', () => {
+                    let emailInput = document.querySelector('input[name="email"]');
+                    let passwordInput = document.querySelector('input[name="password"]');
+                    let submitButton = document.querySelector('button[type="submit"]');
 
-                submitButton.click();
-            });
+                    emailInput.value = credential.email;
+                    passwordInput.value = credential.password;
+                    emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    passwordInput.dispatchEvent(new Event('input', { bubbles: true }));
 
-            let deleteButton = document.createElement('button');
-            deleteButton.textContent = 'X';
-            deleteButton.style.color = 'red';
-            deleteButton.addEventListener('click', () => {
-                require('electron').ipcRenderer.send('delete-credential', i);
-                button.remove();
-                deleteButton.remove();
-            });
+                    submitButton.click();
+                });
 
-            menu.appendChild(button);
-            menu.appendChild(deleteButton);
-        }}
+                let deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.style.color = 'red';
+                deleteButton.addEventListener('click', () => {
+                    require('electron').ipcRenderer.send('delete-credential', {i});
+                    button.remove();
+                    deleteButton.remove();
+                });
+
+                buttonDiv.appendChild(button);
+                buttonDiv.appendChild(deleteButton);
+                menu.appendChild(buttonDiv);
+            }
+        });
     `);
 }
 module.exports = {

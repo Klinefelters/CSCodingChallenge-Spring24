@@ -23,6 +23,10 @@ function createWindow() {
 		console.log(url);
 		if (url.includes("/signin")) {
 			signedOut(mainWindow);
+		} else {
+			mainWindow.webContents.executeJavaScript(`
+        document.querySelector('#credentials-menu').innerHTML = '';
+      `);
 		}
 	};
 
