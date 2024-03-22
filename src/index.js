@@ -16,22 +16,24 @@ function createWindow() {
 		},
 	});
 
-	var splash =  new BrowserWindow({
+	var splash = new BrowserWindow({
 		width: 500,
 		height: 300,
 		transparent: true,
 		frame: false,
-		alwaysOnTop: true
-	})
+		alwaysOnTop: true,
+	});
 
-	splash.loadFile('src/splash/splash.html')
-	splash.center()
+	splash.loadFile("src/splash/splash.html");
+	splash.center();
 
 	mainWindow.loadURL("https://cad.onshape.com/");
 
-	mainWindow.webContents.once("did-finish-load", () =>
-		initialSignIn(mainWindow)
-	);
+	mainWindow.webContents.once("did-finish-load", () => {
+		initialSignIn(mainWindow);
+		splash.close();
+		mainWindow.show();
+	});
 
 	const handleNavigation = (event, url) => {
 		console.log(url);
@@ -48,10 +50,6 @@ function createWindow() {
 
 	mainWindow.webContents.on("did-navigate", handleNavigation);
 	mainWindow.webContents.on("did-navigate-in-page", handleNavigation);
-	setTimeout(function () {
-		splash.close()
-		mainWindow.show()
-	}, 5000);
 }
 
-app.whenReady().then((createWindow));
+app.whenReady().then(createWindow);
