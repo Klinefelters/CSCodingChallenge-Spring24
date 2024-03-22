@@ -41,7 +41,7 @@ function createWindow() {
 
 	splash.loadFile("src/splash/splash.html");
 	splash.center();
-
+	mainWindow.setMenuBarVisibility(false);
 	mainWindow.loadURL("https://cad.onshape.com/");
 
 	mainWindow.webContents.once("did-finish-load", () => {
