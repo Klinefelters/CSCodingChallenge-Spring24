@@ -1,6 +1,5 @@
 const { app, BrowserWindow } = require("electron");
 const { initialSignIn, signedOut } = require("./signin");
-const { spawn } = require("child_process");
 
 let mainWindow;
 
@@ -36,7 +35,7 @@ function createWindow() {
 	});
 
 	const handleNavigation = (event, url) => {
-		console.log(url);
+		// console.log(url);
 		if (url.includes("/signin")) {
 			signedOut(mainWindow);
 		} else {

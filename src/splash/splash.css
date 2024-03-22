@@ -1,5 +1,5 @@
 .loader {
-    background-image: url('C:/Users/elija/CSCodingChallenge-Spring24-1/src/assets/onshape.png');
+    background-image: url('../assets/onshape.png');
     background-size: cover;
     border-radius: 50%;
     width: 120px;
