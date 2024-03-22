@@ -1,6 +1,6 @@
 .loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
+    background-image: url('C:/Users/elija/CSCodingChallenge-Spring24-1/src/assets/onshape.png');
+    background-size: cover;
     border-radius: 50%;
     width: 120px;
     height: 120px;
@@ -9,12 +9,16 @@
 
   .loader-container {
     display: flex;
+    direction: row;
     justify-content: center;
-    align-items: center;
-    height: 100%;
   }
 
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+  }
+
+  h1 {
+    text-align: center;
+    color: #666666;
   }
