@@ -1,5 +1,7 @@
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow } = require("electron");
 const { initialSignIn, signedOut } = require("./signin");
+const createMenu = require("./menu");
+const createSplash = require("./splash");
 
 let mainWindow;
 
@@ -14,33 +16,11 @@ function createWindow() {
 			contextIsolation: false,
 		},
 	});
-	const menu = Menu.buildFromTemplate([
-		{
-			label: "View",
-			submenu: [
-				{
-					label: "Toggle Secondary Full Screen",
-					accelerator: "Alt+Enter",
-					click() {
-						toggleSecondaryFullScreen();
-					},
-				},
-			],
-		},
-	]);
 
-	Menu.setApplicationMenu(menu);
+	createMenu(toggleSecondaryFullScreen);
 
-	var splash = new BrowserWindow({
-		width: 500,
-		height: 300,
-		transparent: true,
-		frame: false,
-		alwaysOnTop: true,
-	});
+	var splash = createSplash();
 
-	splash.loadFile("src/splash/splash.html");
-	splash.center();
 	mainWindow.setMenuBarVisibility(false);
 	mainWindow.loadURL("https://cad.onshape.com/");
 
@@ -51,31 +31,30 @@ function createWindow() {
 	});
 
 	const handleNavigation = (event, url) => {
-		// console.log(url);
 		if (url.includes("/signin")) {
 			signedOut(mainWindow);
 		} else {
 			mainWindow.webContents.executeJavaScript(`
-				if (window.menu){
-					window.menu.innerHTML = '';
-				}
-			`);
+                if (window.menu){
+                    window.menu.innerHTML = '';
+                }
+            `);
 		}
 	};
 
 	mainWindow.webContents.on("did-navigate", handleNavigation);
 	mainWindow.webContents.on("did-navigate-in-page", handleNavigation);
 }
+
 function toggleSecondaryFullScreen() {
 	if (mainWindow.isFullScreen()) {
 		mainWindow.setFullScreen(false);
-		// Add any additional actions you want to perform when exiting full screen
 	} else {
 		mainWindow.setFullScreen(true);
-		// Customize the full screen mode
-		mainWindow.setMenuBarVisibility(false); // Hide the menu bar
-		mainWindow.setAutoHideMenuBar(true); // Auto-hide menu bar
-		mainWindow.maximize(); // Maximize the window to cover the whole screen
+		mainWindow.setMenuBarVisibility(false);
+		mainWindow.setAutoHideMenuBar(true);
+		mainWindow.maximize();
 	}
 }
+
 app.whenReady().then(createWindow);
