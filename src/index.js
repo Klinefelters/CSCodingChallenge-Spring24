@@ -6,6 +6,7 @@ const createSplash = require("./splash");
 let mainWindow;
 
 function createWindow() {
+	let visitedSignIn = false;
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
@@ -25,20 +26,23 @@ function createWindow() {
 	mainWindow.loadURL("https://cad.onshape.com/");
 
 	mainWindow.webContents.once("did-finish-load", () => {
+		visitedSignIn = true;
 		initialSignIn(mainWindow);
 		splash.close();
 		mainWindow.show();
 	});
 
 	const handleNavigation = (event, url) => {
-		if (url.includes("/signin")) {
+		if (url.includes("/signin") && !visitedSignIn) {
+			visitedSignIn = true;
 			signedOut(mainWindow);
-		} else {
+		} else if (visitedSignIn) {
 			mainWindow.webContents.executeJavaScript(`
                 if (window.menu){
                     window.menu.innerHTML = '';
                 }
             `);
+			visitedSignIn = false;
 		}
 	};
 
