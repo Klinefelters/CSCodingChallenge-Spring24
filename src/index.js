@@ -1,12 +1,13 @@
 const { app, BrowserWindow } = require("electron");
-const { initialSignIn, signedOut } = require("./signin");
+const { initialSignIn, signedOut } = require("./signin/signin");
 const createMenu = require("./menu");
-const createSplash = require("./splash");
+const createSplash = require("./splash/splash");
 
 let mainWindow;
 
 function createWindow() {
 	let visitedSignIn = false;
+	let isInitialSignIn = true;
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
@@ -18,24 +19,24 @@ function createWindow() {
 		},
 	});
 
-	createMenu(toggleSecondaryFullScreen);
+	createMenu(mainWindow);
 
 	var splash = createSplash();
-
-	mainWindow.setMenuBarVisibility(false);
+	mainWindow.menuBarVisible = false;
 	mainWindow.loadURL("https://cad.onshape.com/");
 
-	mainWindow.webContents.once("did-finish-load", () => {
-		visitedSignIn = true;
-		initialSignIn(mainWindow);
-		splash.close();
-		mainWindow.show();
-	});
-
 	const handleNavigation = (event, url) => {
-		if (url.includes("/signin") && !visitedSignIn) {
-			visitedSignIn = true;
-			signedOut(mainWindow);
+		if (url.includes("/signin")) {
+			if (isInitialSignIn) {
+				visitedSignIn = true;
+				isInitialSignIn = false;
+				initialSignIn(mainWindow);
+				splash.close();
+				mainWindow.show();
+			} else {
+				visitedSignIn = true;
+				signedOut(mainWindow);
+			}
 		} else if (visitedSignIn) {
 			mainWindow.webContents.executeJavaScript(`
                 if (window.menu){
@@ -48,17 +49,6 @@ function createWindow() {
 
 	mainWindow.webContents.on("did-navigate", handleNavigation);
 	mainWindow.webContents.on("did-navigate-in-page", handleNavigation);
-}
-
-function toggleSecondaryFullScreen() {
-	if (mainWindow.isFullScreen()) {
-		mainWindow.setFullScreen(false);
-	} else {
-		mainWindow.setFullScreen(true);
-		mainWindow.setMenuBarVisibility(false);
-		mainWindow.setAutoHideMenuBar(true);
-		mainWindow.maximize();
-	}
 }
 
 app.whenReady().then(createWindow);
