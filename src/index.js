@@ -2,12 +2,14 @@ const { app, BrowserWindow } = require("electron");
 const { initialSignIn, signedOut } = require("./signin/signin");
 const createMenu = require("./menu");
 const createSplash = require("./splash/splash");
+const documentAddOns = require("./documents/documents");
 
 let mainWindow;
 
 function createWindow() {
 	let visitedSignIn = false;
 	let isInitialSignIn = true;
+	let visitedDocuments = false;
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
@@ -26,6 +28,7 @@ function createWindow() {
 	mainWindow.loadURL("https://cad.onshape.com/");
 
 	const handleNavigation = (event, url) => {
+		console.log(url);
 		if (url.includes("/signin")) {
 			if (isInitialSignIn) {
 				visitedSignIn = true;
@@ -37,6 +40,9 @@ function createWindow() {
 				visitedSignIn = true;
 				signedOut(mainWindow);
 			}
+		} else if (url.includes("/documents/")) {
+			visitedDocuments = true;
+			documentAddOns(mainWindow);
 		} else if (visitedSignIn) {
 			mainWindow.webContents.executeJavaScript(`
                 if (window.menu){
@@ -44,6 +50,15 @@ function createWindow() {
                 }
             `);
 			visitedSignIn = false;
+		} else if (visitedDocuments) {
+			mainWindow.webContents.executeJavaScript(`
+				if (window.modal){
+					window.modal.style.display = 'none';
+				}
+				if (window.magicButton){
+					window.magicButton.style.display = 'none';
+				}
+			`);
 		}
 	};
 

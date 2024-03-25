@@ -1,4 +1,5 @@
 const { BrowserWindow } = require("electron");
+const path = require("path");
 
 function createSplash() {
 	var splash = new BrowserWindow({
@@ -6,7 +7,7 @@ function createSplash() {
 		height: 300,
 		frame: false,
 		alwaysOnTop: true,
-		icon: __dirname + "/assets/onshape.png",
+		icon: path.join(__dirname, "..", "assets", "onshape.png"),
 	});
 
 	splash.loadFile("src/splash/splash.html");
